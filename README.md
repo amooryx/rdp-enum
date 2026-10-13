@@ -23,9 +23,14 @@ python rdp_enum.py <target>
 
 | Flag | Description |
 |---|---|
-| `-o, --output` | Write results to a file |
+| `-o, --output` | Write the report to a file instead of standard output |
 | `-v, --verbose` | Verbose output |
 | `-y, --yes` | Skip the authorisation prompt |
+
+The current implementation is a scaffold: it reports the supplied target and
+states that no target checks were performed. It does not make network
+connections. If the output file cannot be written, the command prints an error
+and exits with status 2.
 
 ## Disclaimer
 

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 
 TOOL = "rdp-enum"
 DESCRIPTION = "RDP exposure, NLA, and security-layer enumeration"
@@ -29,22 +30,26 @@ def authorised(assume_yes: bool) -> bool:
 
 
 def run(args: argparse.Namespace) -> int:
-    """Core routine.
-
-    This is a scaffold: it validates input, states scope, and defines the
-    workflow. Extend `run()` with the checks your engagement needs.
-    """
-    banner()
-    print(f"[*] target : {args.target}")
-    print(f"[*] output : {args.output or '(stdout)'}")
-    print("[*] scaffold ready - implement engagement-specific logic in run().")
+    """Emit the current scaffold's observation report without contacting targets."""
+    report = "\n".join(
+        (
+            f"[ {TOOL} ] {DESCRIPTION}",
+            f"[*] target : {args.target}",
+            "[*] observation : scaffold only; no target checks were performed.",
+            "",
+        )
+    )
+    if args.output:
+        Path(args.output).write_text(report, encoding="utf-8")
+    else:
+        sys.stdout.write(report)
     return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog=TOOL, description=DESCRIPTION)
     p.add_argument("target", help="target host, domain, file, or scope identifier")
-    p.add_argument("-o", "--output", help="write results to this file")
+    p.add_argument("-o", "--output", help="write the report to this file")
     p.add_argument("-v", "--verbose", action="store_true", help="verbose output")
     p.add_argument("-y", "--yes", action="store_true", help="skip the authorisation prompt")
     return p
@@ -60,6 +65,9 @@ def main(argv: list[str] | None = None) -> int:
     except KeyboardInterrupt:
         print("\n[!] interrupted.")
         return 130
+    except OSError as exc:
+        print(f"[!] could not write report: {exc}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":
